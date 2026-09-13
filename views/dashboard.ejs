@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Savings Manager</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <header class="topbar">
+        <h1>Savings Manager</h1>
+      </header>
+
+      <main class="layout">
+        <section class="panel summary-panel">
+          <h2>Overview</h2>
+
+          <div class="summary-grid">
+            <div class="summary-box income">
+              <span class="label">Total Income</span>
+              <strong>$<%= totalIncome.toFixed(2) %></strong>
+            </div>
+
+            <div class="summary-box expense">
+              <span class="label">Total Expenses</span>
+              <strong>$<%= totalExpenses.toFixed(2) %></strong>
+            </div>
+
+            <div class="summary-box balance">
+              <span class="label">Current Savings</span>
+              <strong>$<%= currentBalance.toFixed(2) %></strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel form-panel">
+          <h2>Add New Entry</h2>
+
+          <form action="/add" method="POST" class="entry-form">
+            <div class="field-group">
+              <label for="title">Title</label>
+              <input type="text" id="title" name="title" placeholder="e.g. Monthly Salary" required />
+            </div>
+
+            <div class="field-group">
+              <label for="amount">Amount</label>
+              <input type="number" id="amount" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
+            </div>
+
+            <div class="field-group">
+              <label for="date">Date</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+
+            <div class="field-group">
+              <label for="category">Category</label>
+              <select id="category" name="category" required>
+                <option value="Salary">Salary</option>
+                <option value="Food">Food</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Rent">Rent</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <button type="submit">Add Entry</button>
+          </form>
+        </section>
+
+        <section class="panel list-panel">
+          <h2>Entries</h2>
+
+          <% if (entries.length === 0) { %>
+            <p class="empty-state">No entries yet. Add your first saving entry above.</p>
+          <% } else { %>
+            <ul class="entry-list">
+              <% entries.forEach((entry) => { %>
+                <li class="entry-item">
+                  <div class="entry-main">
+                    <div>
+                      <h3><%= entry.title %></h3>
+                      <p class="meta"><%= entry.category %> • <%= entry.date %></p>
+                    </div>
+
+                    <div class="entry-amount <%= entry.type %>">
+                      <% if (entry.type === 'income') { %>
+                        +$<%= entry.amount.toFixed(2) %>
+                      <% } else { %>
+                        -$<%= entry.amount.toFixed(2) %>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <form action="/delete/<%= entry.id %>" method="POST" class="delete-form">
+                    <button type="submit" class="delete-btn">Delete</button>
+                  </form>
+                </li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
