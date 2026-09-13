@@ -17,18 +17,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build Docker image (local only)
         uses: docker/build-push-action@v5
         with:
           context: .
           push: false
           load: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:v${{ github.run_number }}
 
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:latest
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:v${{ github.run_number }}
           format: table
           exit-code: 0
           severity: CRITICAL,HIGH
@@ -38,4 +39,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/saving-manager:v${{ github.run_number }}
