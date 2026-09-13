@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Monthly Salary",
+    "amount": 2500,
+    "date": "2026-09-01",
+    "category": "Salary",
+    "type": "income",
+    "notes": "Primary salary deposit"
+  },
+  {
+    "id": 2,
+    "title": "Groceries",
+    "amount": 180,
+    "date": "2026-09-02",
+    "category": "Food",
+    "type": "expense",
+    "notes": "Weekly grocery shopping"
+  },
+  {
+    "id": 3,
+    "title": "Online Shopping",
+    "amount": 95,
+    "date": "2026-09-05",
+    "category": "Shopping",
+    "type": "expense",
+    "notes": "Books and accessories"
+  }
+]

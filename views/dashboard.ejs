@@ -9,27 +9,59 @@
   <body>
     <div class="page-wrapper">
       <header class="topbar">
-        <h1>Savings Manager</h1>
+        <div>
+          <p class="eyebrow">Personal Finance Dashboard</p>
+          <h1>₹ Savings Manager</h1>
+        </div>
+
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span><%= totalTransactions %> entries tracked</span>
+        </div>
       </header>
 
       <main class="layout">
         <section class="panel summary-panel">
-          <h2>Overview</h2>
+          <div class="section-head">
+            <h2>Overview</h2>
+            <span class="badge">Live</span>
+          </div>
 
           <div class="summary-grid">
             <div class="summary-box income">
               <span class="label">Total Income</span>
-              <strong>$<%= totalIncome.toFixed(2) %></strong>
+              <strong><%= formatINR(totalIncome) %></strong>
             </div>
 
             <div class="summary-box expense">
               <span class="label">Total Expenses</span>
-              <strong>$<%= totalExpenses.toFixed(2) %></strong>
+              <strong><%= formatINR(totalExpenses) %></strong>
             </div>
 
             <div class="summary-box balance">
               <span class="label">Current Savings</span>
-              <strong>$<%= currentBalance.toFixed(2) %></strong>
+              <strong><%= formatINR(currentBalance) %></strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel insights-panel">
+          <h2>Quick Insights</h2>
+
+          <div class="insights-grid">
+            <div class="insight-box">
+              <span class="label">Top Category</span>
+              <strong><%= topCategory %></strong>
+            </div>
+
+            <div class="insight-box">
+              <span class="label">Savings Rate</span>
+              <strong><%= savingsRate %>%</strong>
+            </div>
+
+            <div class="insight-box">
+              <span class="label">Transactions</span>
+              <strong><%= totalTransactions %></strong>
             </div>
           </div>
         </section>
@@ -38,7 +70,7 @@
           <h2>Add New Entry</h2>
 
           <form action="/add" method="POST" class="entry-form">
-            <div class="field-group">
+            <div class="field-group full">
               <label for="title">Title</label>
               <input type="text" id="title" name="title" placeholder="e.g. Monthly Salary" required />
             </div>
@@ -51,6 +83,14 @@
             <div class="field-group">
               <label for="date">Date</label>
               <input type="date" id="date" name="date" required />
+            </div>
+
+            <div class="field-group">
+              <label for="type">Entry Type</label>
+              <select id="type" name="type" required>
+                <option value="income">Income</option>
+                <option value="expense" selected>Expense</option>
+              </select>
             </div>
 
             <div class="field-group">
@@ -67,31 +107,65 @@
               </select>
             </div>
 
-            <button type="submit">Add Entry</button>
+            <div class="field-group full">
+              <label for="notes">Notes</label>
+              <input type="text" id="notes" name="notes" placeholder="Optional note about this entry" />
+            </div>
+
+            <button type="submit" class="primary-btn">Add Entry</button>
           </form>
         </section>
 
         <section class="panel list-panel">
-          <h2>Entries</h2>
+          <div class="section-head list-head">
+            <h2>Entries</h2>
+
+            <form action="/" method="GET" class="toolbar">
+              <input
+                type="search"
+                name="search"
+                value="<%= searchQuery %>"
+                placeholder="Search entries"
+                aria-label="Search entries"
+              />
+
+              <select name="type" aria-label="Filter by type">
+                <option value="all" <%= selectedType === 'all' ? 'selected' : '' %>>All</option>
+                <option value="income" <%= selectedType === 'income' ? 'selected' : '' %>>Income</option>
+                <option value="expense" <%= selectedType === 'expense' ? 'selected' : '' %>>Expense</option>
+              </select>
+
+              <button type="submit" class="secondary-btn">Filter</button>
+            </form>
+          </div>
 
           <% if (entries.length === 0) { %>
-            <p class="empty-state">No entries yet. Add your first saving entry above.</p>
+            <p class="empty-state">No entries found. Try a different search or add a new transaction.</p>
           <% } else { %>
             <ul class="entry-list">
               <% entries.forEach((entry) => { %>
                 <li class="entry-item">
                   <div class="entry-main">
-                    <div>
+                    <div class="entry-copy">
                       <h3><%= entry.title %></h3>
-                      <p class="meta"><%= entry.category %> • <%= entry.date %></p>
+
+                      <% if (entry.notes) { %>
+                        <p class="note"><%= entry.notes %></p>
+                      <% } %>
+
+                      <p class="meta"><%= entry.category %> • <%= formatDate(entry.date) %></p>
                     </div>
 
-                    <div class="entry-amount <%= entry.type %>">
-                      <% if (entry.type === 'income') { %>
-                        +$<%= entry.amount.toFixed(2) %>
-                      <% } else { %>
-                        -$<%= entry.amount.toFixed(2) %>
-                      <% } %>
+                    <div class="entry-details">
+                      <span class="pill <%= entry.type %>"><%= entry.type %></span>
+
+                      <div class="entry-amount <%= entry.type %>">
+                        <% if (entry.type === 'income') { %>
+                          +<%= formatINR(entry.amount) %>
+                        <% } else { %>
+                          -<%= formatINR(entry.amount) %>
+                        <% } %>
+                      </div>
                     </div>
                   </div>
 
